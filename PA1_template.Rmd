@@ -4,17 +4,181 @@
 ## Loading and preprocessing the data
 
 
+We will first read the activity *.csv file into R.
+The date column is set to the Date class in R, to be able 
+to use date functions to process the data.
+
+```{r}
+ activity <- read.csv("activity.csv")
+ activity$date <- as.Date(activity$date)
+```
+
+
+
 
 ## What is mean total number of steps taken per day?
 
+We first create a vector of the days that are part of the dataset.
 
+```{r}
+ daysequence <- seq(activity$date[1], activity$date[length(activity$date)],"day")
+
+ daysequence
+```
+
+The "day" parameter makes the sequence list each day only once while reading the ``` activity$date ``` column.
+
+```{r}
+
+ totalStepsPerDay <- numeric(length(daysequence))
+for(i in 1:length(daysequence)){
+     
+     daystoadd <- activity$steps[(activity$date == daysequence[i])]
+     
+     totalStepsPerDay[i] <- sum(daystoadd, na.rm=TRUE)
+     
+     
+ }
+```
+
+```{r}
+ hist(totalStepsPerDay)
+```
+
+```{r}
+ 
+ mean(totalStepsPerDay)
+ median(totalStepsPerDay)
+ 
+ summary(totalStepsPerDay)
+```
 
 ## What is the average daily activity pattern?
 
+```{r}
+activity.DF <- data.frame(activity)
 
+activity_mean_min <- aggregate(activity.DF[,1], by=list(activity.DF$date,activity.DF$interval), FUN=mean)
+
+colnames(activity_mean_min) <- c("Date", "Interval", "Steps")
+```
+
+```{r}
+intervalsequence <- activity$interval[(activity$date == daysequence[1])]
+
+mean_steps_interval <- numeric(length(intervalsequence))
+
+for(j in 1:length(intervalsequence)){
+     
+    intervaltoavg <- activity_mean_min$Steps[(activity_mean_min$Interval == intervalsequence[j])]
+    
+	  mean_steps_interval[j] <- mean(intervaltoavg, na.rm=TRUE)
+     
+     
+}
+```
+
+```{r}
+
+ plot(1:length(mean_steps_interval), mean_steps_interval, 
+      type="l", xlab="5-minute Interval", ylab="Average number of steps taken, averaged across all days")
+```
+
+```{r}
+ summary(mean_steps_interval)
+ 
+ 
+ mean_steps_interval
+ 
+ which.max(mean_steps_interval)
+ 
+  mean_steps_interval[which.max(mean_steps_interval)]
+
+ intervalsequence[which.max(mean_steps_interval)]
+```
+ 
 
 ## Imputing missing values
+
+```{r}
+
+ length(which(is.na(activity_mean_min)==TRUE))
+ 
+  mean_days <- numeric(length(daysequence))
+ 
+ for(i in 1:length(daysequence)){
+
+  daystoavg <- activity$steps[(activity$date == daysequence[i])]
+
+	mean_days[i] <- mean(daystoavg, na.rm=TRUE)
+
+
+}
+
+mean_days
+
+NAdays <- daysequence[is.nan(mean_days)]
+
+NAdays
+```
+
+```{r}
+
+for(k in 1:length(NAdays)){
+     
+     activity.DF$steps[(activity.DF$date == NAdays[k])] <- mean_steps_interval
+     
+     
+ }
+ 
+ 
+ totalStepsPerDayIMP <- numeric(length(daysequence))
+for(i in 1:length(daysequence)){
+     
+     daystoadd <- activity.DF$steps[(activity.DF$date == daysequence[i])]
+     
+     totalStepsPerDayIMP[i] <- sum(daystoadd, na.rm=TRUE)
+     
+     
+ }
+```
+
+```{r}
+ hist(totalStepsPerDayIMP)
+ mean(totalStepsPerDayIMP)
+ median(totalStepsPerDayIMP)
+ summary(totalStepsPerDayIMP)
+```
+
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+```{r}
+ dayfactor <- character(length(activity$date))
+ 
+ for(j in 1:length(activity.DF$date)){
+
+  if((weekdays(activity.DF$date[j])=="Saturday")|(weekdays(activity.DF$date[j])=="Sunday"))
+  	dayfactor[j] <- "weekend"
+	else
+		dayfactor[j] <- "weekday"
+		
+}	
+
+ activity.DF <- cbind(activity.DF, dayfactor)
+```
+
+```{r}
+ require(lattice)
+
+ p <- xyplot(steps ~ interval | dayfactor, data = activity.DF, type = "l", layout=c(1,2,1))
+ print(p)
+```
+
+
+
+
+ 
