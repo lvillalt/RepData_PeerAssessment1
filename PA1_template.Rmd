@@ -4,8 +4,7 @@
 ## Loading and preprocessing the data
 
 
-We will first read the activity *.csv file into R.
-The date column is set to the Date class in R. This enables the use of date functions to process the data.
+The activity *.csv file is first read into R. The date column is set to the Date class in R. This enables the use of date functions to process the data.
 
 ```{r}
  activity <- read.csv("activity.csv")
@@ -13,11 +12,13 @@ The date column is set to the Date class in R. This enables the use of date func
 ```
 
 
-## What is mean total number of steps taken per day?
+## What is the mean total number of steps taken per day?
 
-We first create a vector of the days that are part of the dataset. Using the "day" option in the seq() function creates a list of unique days in the date set. 
+Create a vector of the days that are part of the dataset. Using the "day" option in the seq() function creates a list of unique days in the date set. 
 
 (The "day" parameter makes the sequence list each day only once while reading the ``` activity$date ``` column.)
+
+The resulting vector is displayed for completeness.
 
 ```{r}
  daysequence <- seq(activity$date[1], activity$date[length(activity$date)],"day")
@@ -27,31 +28,45 @@ We first create a vector of the days that are part of the dataset. Using the "da
 
 A numeric vector with length equal to the number of unique days is created to hold the total steps per day.
 
-The ```for``` loop then adds up all step for each day in the sequence.
+The ```for``` loop then adds up all steps for each day in the sequence.
 
 
 ```{r}
 
- totalStepsPerDay <- numeric(length(daysequence))
+totalStepsPerDay <- numeric(length(daysequence))
+
 for(i in 1:length(daysequence)){
      
      daystoadd <- activity$steps[(activity$date == daysequence[i])]
      
      totalStepsPerDay[i] <- sum(daystoadd, na.rm=TRUE)
-     
-     
+          
  }
 ```
 
+A barplot of total steps per day is created, by first setting up the labels for readability. Please note that each tick corresponds to a day in the ```daysequence``` vector displayed earlier. Note that this is for clarity, as will be described later. The barplot shows the steps for each day, where a histogram would show the *frequency* of a total steps count in the whole vector.
 
 
 ```{r}
- Plotlabs <- seq(min(daysequence), max(daysequence), by="day")
+Plotlabs <- seq(min(daysequence), max(daysequence), by="day")
+
 Plotlabs.pos <- round(seq(1, length(daysequence), length.out=length(daysequence)))
+
 mp <- barplot(totalStepsPerDay, xaxt="n", main="Plot of Total Steps Per Day in the dataset", xlab="Date", ylab="Number Of steps")
+
 axis(1, at=mp, labels=Plotlabs)
 
 ```
+
+This is the histogram required for the assignment. Note that it shows the frequencies for counts that fall in each of the "Sturges" bins. See ```?hist``` for details.
+
+```{r}
+hist(totalStepsPerDay, main="Histogram of Total Steps Per Day", xlab="Total count of steps per day")
+
+```
+
+
+The **mean** and **median** of the total number of steps per day are calculated. The **summary** is also displayed for completeness.
 
 ```{r}
  
@@ -63,6 +78,8 @@ axis(1, at=mp, labels=Plotlabs)
 
 ## What is the average daily activity pattern?
 
+Note that here the ```aggregate``` function is used to rearrange the data into a data frame organized by *interval* and not by *date*. 
+
 ```{r}
 activity.DF <- data.frame(activity)
 
@@ -70,6 +87,18 @@ activity_mean_min <- aggregate(activity.DF[,1], by=list(activity.DF$date,activit
 
 colnames(activity_mean_min) <- c("Date", "Interval", "Steps")
 ```
+
+The first few items in the data frame to show the effect.
+
+```{r}
+head(activity_mean_min)
+```
+
+We now create a sequence of intervals by subsetting by one date (the first day, but it would work with any day).
+
+A numeric vector with length equal to the number of 5-minute intervals is created to hold the mean steps per interval.
+
+The ```for``` loop then takes the mean for each interval in the sequence.
 
 ```{r}
 intervalsequence <- activity$interval[(activity$date == daysequence[1])]
@@ -80,8 +109,7 @@ for(j in 1:length(intervalsequence)){
      
     intervaltoavg <- activity_mean_min$Steps[(activity_mean_min$Interval == intervalsequence[j])]
     
-	  mean_steps_interval[j] <- mean(intervaltoavg, na.rm=TRUE)
-     
+	  mean_steps_interval[j] <- mean(intervaltoavg, na.rm=TRUE)    
      
 }
 ```
@@ -89,7 +117,9 @@ for(j in 1:length(intervalsequence)){
 ```{r}
 
  plot(1:length(mean_steps_interval), mean_steps_interval, 
-      type="l", main="Plot of steps per 5-minute interval, averaged across all days", xlab="5-minute Interval index", ylab="Average number of steps taken, averaged across all days")
+      type="l", main="Plot of steps per 5-minute interval, averaged across all days", 
+      xlab="5-minute Interval index", 
+      ylab="Average number of steps taken, averaged across all days")
 ```
 
 ```{r}
@@ -164,6 +194,12 @@ axis(1, at=mp, labels=Plotlabs)
  summary(totalStepsPerDayIMP)
 ```
 
+This is the histogram required for the assignment. Note that it shows the frequencies for counts that fall in each of the "Sturges" bins. See ```?hist``` for details.
+
+```{r}
+hist(totalStepsPerDayIMP, main="Histogram of Total Steps Per Day, with Imputed Data", xlab="Total count of steps per day")
+
+```
 
 
 
