@@ -64,7 +64,7 @@ for(i in 1:length(daysequence)){
  hist(totalStepsPerDay)
 ```
 
-![plot of chunk unnamed-chunk-4](./PA1_template_files/figure-html/unnamed-chunk-4.png) 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 
 
 ```r
@@ -125,7 +125,7 @@ for(j in 1:length(intervalsequence)){
       type="l", xlab="5-minute Interval", ylab="Average number of steps taken, averaged across all days")
 ```
 
-![plot of chunk unnamed-chunk-8](./PA1_template_files/figure-html/unnamed-chunk-8.png) 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
 
 
 ```r
@@ -285,7 +285,7 @@ for(i in 1:length(daysequence)){
  hist(totalStepsPerDayIMP)
 ```
 
-![plot of chunk unnamed-chunk-12](./PA1_template_files/figure-html/unnamed-chunk-12.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 
 ```r
  mean(totalStepsPerDayIMP)
@@ -343,12 +343,16 @@ for(i in 1:length(daysequence)){
 ## Loading required package: lattice
 ```
 
+```
+## Warning: package 'lattice' was built under R version 3.1.1
+```
+
 ```r
  p <- xyplot(steps ~ interval | dayfactor, data = activity.DF, type = "l", layout=c(1,2,1))
  print(p)
 ```
 
-![plot of chunk unnamed-chunk-14](./PA1_template_files/figure-html/unnamed-chunk-14.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
 
 
 
