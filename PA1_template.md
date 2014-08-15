@@ -5,8 +5,7 @@
 
 
 We will first read the activity *.csv file into R.
-The date column is set to the Date class in R, to be able 
-to use date functions to process the data.
+The date column is set to the Date class in R. This enables the use of date functions to process the data.
 
 
 ```r
@@ -15,11 +14,11 @@ to use date functions to process the data.
 ```
 
 
-
-
 ## What is mean total number of steps taken per day?
 
-We first create a vector of the days that are part of the dataset.
+We first create a vector of the days that are part of the dataset. Using the "day" option in the seq() function creates a list of unique days in the date set. 
+
+(The "day" parameter makes the sequence list each day only once while reading the ``` activity$date ``` column.)
 
 
 ```r
@@ -44,7 +43,10 @@ We first create a vector of the days that are part of the dataset.
 ## [61] "2012-11-30"
 ```
 
-The "day" parameter makes the sequence list each day only once while reading the ``` activity$date ``` column.
+A numeric vector with length equal to the number of unique days is created to hold the total steps per day.
+
+The ```for``` loop then adds up all step for each day in the sequence.
+
 
 
 ```r
@@ -60,8 +62,13 @@ for(i in 1:length(daysequence)){
 ```
 
 
+
+
 ```r
- hist(totalStepsPerDay)
+ Plotlabs <- seq(min(daysequence), max(daysequence), by="day")
+Plotlabs.pos <- round(seq(1, length(daysequence), length.out=length(daysequence)))
+mp <- barplot(totalStepsPerDay, xaxt="n", main="Plot of Total Steps Per Day in the dataset", xlab="Date", ylab="Number Of steps")
+axis(1, at=mp, labels=Plotlabs)
 ```
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
@@ -122,7 +129,7 @@ for(j in 1:length(intervalsequence)){
 
 ```r
  plot(1:length(mean_steps_interval), mean_steps_interval, 
-      type="l", xlab="5-minute Interval", ylab="Average number of steps taken, averaged across all days")
+      type="l", main="Plot of steps per 5-minute interval, averaged across all days", xlab="5-minute Interval index", ylab="Average number of steps taken, averaged across all days")
 ```
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
@@ -282,7 +289,10 @@ for(i in 1:length(daysequence)){
 
 
 ```r
- hist(totalStepsPerDayIMP)
+ Plotlabs <- seq(min(daysequence), max(daysequence), by="day")
+Plotlabs.pos <- round(seq(1, length(daysequence), length.out=length(daysequence)))
+mp <- barplot(totalStepsPerDayIMP, xaxt="n", main="Plot of Total Steps Per Day in the dataset, with Imputed values", xlab="Date", ylab="Number Of steps")
+axis(1, at=mp, labels=Plotlabs)
 ```
 
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
@@ -337,17 +347,7 @@ for(i in 1:length(daysequence)){
 
 ```r
  require(lattice)
-```
 
-```
-## Loading required package: lattice
-```
-
-```
-## Warning: package 'lattice' was built under R version 3.1.1
-```
-
-```r
  p <- xyplot(steps ~ interval | dayfactor, data = activity.DF, type = "l", layout=c(1,2,1))
  print(p)
 ```
